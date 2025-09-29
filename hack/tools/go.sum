@@ -120,8 +120,8 @@ github.com/alecthomas/repr v0.5.1 h1:E3G4t2QbHTSNpPKBgMTln5KLkZHLOcU7r37J4pXBuIg
 github.com/alecthomas/repr v0.5.1/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/anchore/bubbly v0.0.0-20230518153401-87b6af8ccf22 h1:5NFK6VGgqBUOAX2SYyzFYvNdOiYDxzim8jga386FlZY=
 github.com/anchore/bubbly v0.0.0-20230518153401-87b6af8ccf22/go.mod h1:Kv+Mm9CdtnV8iem48iEPIwy7/N4Wmk0hpxYNH5gTwKQ=
-github.com/anchore/go-logger v0.0.0-20230725134548-c21dafa1ec5a h1:nJ2G8zWKASyVClGVgG7sfM5mwoZlZ2zYpIzN2OhjWkw=
-github.com/anchore/go-logger v0.0.0-20230725134548-c21dafa1ec5a/go.mod h1:ubLFmlsv8/DFUQrZwY5syT5/8Er3ugSr4rDFwHsE3hg=
+github.com/anchore/go-logger v0.0.0-20250813181427-74728f89a619 h1:G7a3bZv0QlY39xRKKoMK16AficGWVJo+5uuMziPZ2W8=
+github.com/anchore/go-logger v0.0.0-20250813181427-74728f89a619/go.mod h1:oFuE8YuTCM+spgMXhePGzk3asS94yO9biUfDzVTFqNw=
 github.com/anchore/go-macholibre v0.0.0-20220308212642-53e6d0aaf6fb h1:iDMnx6LIjtjZ46C0akqveX83WFzhpTD3eqOthawb5vU=
 github.com/anchore/go-macholibre v0.0.0-20220308212642-53e6d0aaf6fb/go.mod h1:DmTY2Mfcv38hsHbG78xMiTDdxFtkHpgYNVDPsF2TgHk=
 github.com/anchore/quill v0.4.1 h1:mffDnvnER3ZgPjN5hexc3nr/4Y1dtKdDB6td5K8uInk=
