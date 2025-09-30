@@ -70,7 +70,10 @@ require (
 	sigs.k8s.io/yaml v1.4.0
 )
 
-require github.com/aws/aws-sdk-go v1.55.7 // indirect
+require (
+	github.com/aws/aws-sdk-go v1.55.7 // indirect
+	github.com/pborman/uuid v1.2.1 // indirect
+)
 
 require (
 	al.essio.dev/pkg/shellescape v1.5.1 // indirect
@@ -154,7 +157,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/goterm v0.0.0-20190703233501-fc88cf888a3f // indirect
 	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
-	github.com/google/safetext v0.0.0-20220905092116-b49f7bc46da2 // indirect
+	github.com/google/safetext v0.0.0-20240722112252-5a72de7e7962 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
