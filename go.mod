@@ -47,7 +47,7 @@ require (
 	github.com/sergi/go-diff v1.3.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/pflag v1.0.6
+	github.com/spf13/pflag v1.0.10
 	github.com/zgalor/weberr v0.8.2
 	golang.org/x/crypto v0.36.0
 	golang.org/x/net v0.38.0
