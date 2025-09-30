@@ -258,7 +258,7 @@ require (
 	github.com/muesli/mango-pflag v0.1.0 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/roff v0.1.0 // indirect
-	github.com/muesli/termenv v0.15.2 // indirect
+	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/multiformats/go-base32 v0.1.0 // indirect
 	github.com/multiformats/go-base36 v0.2.0 // indirect
 	github.com/multiformats/go-multibase v0.2.0 // indirect
