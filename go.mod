@@ -39,7 +39,7 @@ require (
 	github.com/google/gofuzz v1.2.0
 	github.com/onsi/ginkgo/v2 v2.23.3
 	github.com/onsi/gomega v1.36.3
-	github.com/openshift-online/ocm-common v0.0.29
+	github.com/openshift-online/ocm-common v0.0.31
 	github.com/openshift-online/ocm-sdk-go v0.1.465
 	github.com/openshift/rosa v1.2.55
 	github.com/pkg/errors v0.9.1
