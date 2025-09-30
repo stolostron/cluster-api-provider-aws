@@ -368,7 +368,7 @@ require (
 	lukechampine.com/blake3 v1.2.1 // indirect
 	sigs.k8s.io/cluster-api v1.10.2 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
-	sigs.k8s.io/kubebuilder/docs/book/utils v0.0.0-20211028165026-57688c578b5d // indirect
+	sigs.k8s.io/kubebuilder/docs/book/utils v0.0.0-20250926105417-eb935e82f287 // indirect
 	sigs.k8s.io/kustomize/api v0.20.1 // indirect
 	sigs.k8s.io/kustomize/cmd/config v0.20.1 // indirect
 	sigs.k8s.io/kustomize/kyaml v0.20.1 // indirect
