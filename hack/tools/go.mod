@@ -16,7 +16,7 @@ require (
 	k8s.io/gengo/v2 v2.0.0-20250604051438-85fd79dbfd9f
 	k8s.io/klog/v2 v2.130.1
 	sigs.k8s.io/cluster-api/hack/tools v0.0.0-20250520093716-525566440a77
-	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20240923090159-236e448db12c
+	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250926234817-7c50567748ae
 	sigs.k8s.io/controller-tools v0.19.0
 	sigs.k8s.io/kind v0.30.0
 	sigs.k8s.io/kustomize/kustomize/v5 v5.7.1
