@@ -13,7 +13,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	k8s.io/apimachinery v0.34.1
 	k8s.io/code-generator v0.34.0
-	k8s.io/gengo/v2 v2.0.0-20250604051438-85fd79dbfd9f
+	k8s.io/gengo/v2 v2.0.0-20250922181213-ec3ebc5fd46b
 	k8s.io/klog/v2 v2.130.1
 	sigs.k8s.io/cluster-api/hack/tools v0.0.0-20250520093716-525566440a77
 	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20240923090159-236e448db12c
