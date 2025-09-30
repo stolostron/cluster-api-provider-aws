@@ -62,7 +62,7 @@ require (
 	k8s.io/component-base v0.32.3
 	k8s.io/klog/v2 v2.130.1
 	k8s.io/kubectl v0.32.3
-	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
+	k8s.io/utils v0.0.0-20250820121507-0af2bda4dd1d
 	sigs.k8s.io/aws-iam-authenticator v0.6.13
 	sigs.k8s.io/cluster-api v1.10.2
 	sigs.k8s.io/cluster-api/test v1.10.2
