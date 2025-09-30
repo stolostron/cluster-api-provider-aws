@@ -70,7 +70,7 @@ require (
 	sigs.k8s.io/yaml v1.4.0
 )
 
-require github.com/aws/aws-sdk-go v1.55.7 // indirect
+require github.com/aws/aws-sdk-go v1.55.8 // indirect
 
 require (
 	al.essio.dev/pkg/shellescape v1.5.1 // indirect
