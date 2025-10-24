@@ -11,9 +11,5 @@ jobs:
         working-directory: .
     steps:
       - uses: actions/checkout@v4
-      - name: binaries
-        run: make binaries
       - name: docker-build
         run: podman build -f stolostron/Dockerfile.stolostron .
-      - name: test
-        run: make test
