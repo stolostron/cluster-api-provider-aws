@@ -71,6 +71,17 @@ const (
 	Nightly ChannelGroupType = "nightly"
 )
 
+// AutoNodeMode specifies the AutoNode mode for the ROSA Control Plane.
+type AutoNodeMode string
+
+const (
+	// AutoNodeModeEnabled enable AutoNode
+	AutoNodeModeEnabled AutoNodeMode = "Enabled"
+
+	// AutoNodeModeDisabled Disabled AutoNode
+	AutoNodeModeDisabled AutoNodeMode = "Disabled"
+)
+
 // RosaControlPlaneSpec defines the desired state of ROSAControlPlane.
 type RosaControlPlaneSpec struct { //nolint: maligned
 	// Cluster name must be valid DNS-1035 label, so it must consist of lower case alphanumeric
@@ -97,12 +108,14 @@ type RosaControlPlaneSpec struct { //nolint: maligned
 
 	// The Subnet IDs to use when installing the cluster.
 	// SubnetIDs should come in pairs; two per availability zone, one private and one public.
-	Subnets []string `json:"subnets"`
+	// +optional
+	Subnets []string `json:"subnets,omitempty"`
 
 	// AvailabilityZones describe AWS AvailabilityZones of the worker nodes.
 	// should match the AvailabilityZones of the provided Subnets.
 	// a machinepool will be created for each availabilityZone.
-	AvailabilityZones []string `json:"availabilityZones"`
+	// +optional
+	AvailabilityZones []string `json:"availabilityZones,omitempty"`
 
 	// The AWS Region the cluster lives in.
 	Region string `json:"region"`
@@ -249,6 +262,30 @@ type RosaControlPlaneSpec struct { //nolint: maligned
 	// ClusterRegistryConfig represents registry config used with the cluster.
 	// +optional
 	ClusterRegistryConfig *RegistryConfig `json:"clusterRegistryConfig,omitempty"`
+
+	// autoNode set the autoNode mode and roleARN.
+	// +optional
+	AutoNode *AutoNode `json:"autoNode,omitempty"`
+
+	// ROSANetworkRef references ROSANetwork custom resource that contains the networking infrastructure
+	// for the ROSA HCP cluster.
+	// +optional
+	ROSANetworkRef *corev1.LocalObjectReference `json:"rosaNetworkRef,omitempty"`
+}
+
+// AutoNode set the AutoNode mode and AutoNode role ARN.
+type AutoNode struct {
+	// mode specifies the mode for the AutoNode. Setting Enable/Disable mode will allows/disallow karpenter AutoNode scaling.
+	// +kubebuilder:validation:Enum=Enabled;Disabled
+	// +kubebuilder:default=Disabled
+	// +optional
+	Mode AutoNodeMode `json:"mode,omitempty"`
+
+	// roleARN sets the autoNode role ARN, which includes the IAM policy and cluster-specific role that grant the necessary permissions to the Karpenter controller.
+	// The role must be attached with the same OIDC-ID that is used with the ROSA-HCP cluster.
+	// +kubebuilder:validation:MaxLength:=2048
+	// +optional
+	RoleARN string `json:"roleARN,omitempty"`
 }
 
 // RegistryConfig for ROSA-HCP cluster
