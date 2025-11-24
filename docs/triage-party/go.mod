@@ -8,4 +8,4 @@ require (
 	github.com/aws/jsii-runtime-go v1.30.0
 )
 
-require github.com/Masterminds/semver/v3 v3.1.1 // indirect
+require github.com/Masterminds/semver/v3 v3.4.0 // indirect
