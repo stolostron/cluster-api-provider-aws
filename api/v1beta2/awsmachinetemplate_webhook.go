@@ -172,6 +172,7 @@ func (r *AWSMachineTemplate) validateIgnitionAndCloudInit() field.ErrorList {
 
 	return allErrs
 }
+
 func (r *AWSMachineTemplate) validateHostAllocation() field.ErrorList {
 	var allErrs field.ErrorList
 
@@ -183,6 +184,11 @@ func (r *AWSMachineTemplate) validateHostAllocation() field.ErrorList {
 
 	if hasHostID && hasDynamicHostAllocation {
 		allErrs = append(allErrs, field.Forbidden(field.NewPath("spec.template.spec.hostID"), "hostID and dynamicHostAllocation are mutually exclusive"), field.Forbidden(field.NewPath("spec.template.spec.dynamicHostAllocation"), "hostID and dynamicHostAllocation are mutually exclusive"))
+	}
+
+	// When hostAffinity is "host", either hostID or dynamicHostAllocation must be specified
+	if spec.HostAffinity != nil && *spec.HostAffinity == "host" && !hasHostID && !hasDynamicHostAllocation {
+		allErrs = append(allErrs, field.Required(field.NewPath("spec.template.spec.hostID"), "hostID or dynamicHostAllocation must be set when hostAffinity is 'host'"))
 	}
 
 	return allErrs
@@ -244,7 +250,7 @@ func (r *AWSMachineTemplateWebhook) ValidateUpdate(ctx context.Context, oldRaw r
 
 	var allErrs field.ErrorList
 
-	if !topology.ShouldSkipImmutabilityChecks(req, newAWSMachineTemplate) && !cmp.Equal(newAWSMachineTemplate.Spec, oldAWSMachineTemplate.Spec) {
+	if !topology.IsDryRunRequest(req, newAWSMachineTemplate) && !cmp.Equal(newAWSMachineTemplate.Spec, oldAWSMachineTemplate.Spec) {
 		if oldAWSMachineTemplate.Spec.Template.Spec.InstanceMetadataOptions == nil {
 			oldAWSMachineTemplate.Spec.Template.Spec.InstanceMetadataOptions = newAWSMachineTemplate.Spec.Template.Spec.InstanceMetadataOptions
 		}

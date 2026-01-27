@@ -19,7 +19,7 @@ package v1beta2
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
+	clusterv1beta1 "sigs.k8s.io/cluster-api/api/core/v1beta1"
 )
 
 const (
@@ -251,18 +251,22 @@ type AWSMachineSpec struct {
 	HostID *string `json:"hostID,omitempty"`
 
 	// HostAffinity specifies the dedicated host affinity setting for the instance.
-	// When HostAffinity is set to host, an instance started onto a specific host always restarts on the same host if stopped.
-	// When HostAffinity is set to default, and you stop and restart the instance, it can be restarted on any available host.
-	// When HostAffinity is defined, HostID is required.
+	// When HostAffinity is set to "host", an instance started onto a specific host always restarts on the same host if stopped:
+	// - If HostID is set, the instance launches on the specific host and must return to that same host after any stop/start (Targeted & Pinned).
+	// - If HostID is not set, the instance gets launched on any available and must returns to the same host after any stop/start (Auto-placed & Pinned).
+	// When HostAffinity is set to "default" (the default value), the instance (when restarted) can return on any available host:
+	// - If HostID is set, the instance launches on the specified host now, but (when restarted) can return to any available hosts (Targeted & Flexible).
+	// - If HostID is not set, the instance launches on any available host now, and (when restarted) can return to any available hosts (Auto-placed & Flexible).
+	// If HostAffinity is not specified, it defaults to "default".
 	// +optional
 	// +kubebuilder:validation:Enum:=default;host
-	// +kubebuilder:default=host
+	// +kubebuilder:default=default
 	HostAffinity *string `json:"hostAffinity,omitempty"`
 
 	// DynamicHostAllocation enables automatic allocation of a single dedicated host.
-	// This field is mutually exclusive with HostID and always allocates exactly one host.
 	// Cost effectiveness of allocating a single instance on a dedicated host may vary
 	// depending on the instance type and the region.
+	// This field is mutually exclusive with HostID and always allocates exactly one host.
 	// +optional
 	DynamicHostAllocation *DynamicHostAllocationSpec `json:"dynamicHostAllocation,omitempty"`
 
@@ -414,7 +418,7 @@ type AWSMachineStatus struct {
 	Interruptible bool `json:"interruptible,omitempty"`
 
 	// Addresses contains the AWS instance associated addresses.
-	Addresses []clusterv1.MachineAddress `json:"addresses,omitempty"`
+	Addresses []clusterv1beta1.MachineAddress `json:"addresses,omitempty"`
 
 	// InstanceState is the state of the AWS instance for this machine.
 	// +optional
@@ -460,7 +464,7 @@ type AWSMachineStatus struct {
 
 	// Conditions defines current service state of the AWSMachine.
 	// +optional
-	Conditions clusterv1.Conditions `json:"conditions,omitempty"`
+	Conditions clusterv1beta1.Conditions `json:"conditions,omitempty"`
 
 	// DedicatedHost tracks the dynamically allocated dedicated host.
 	// This field is populated when DynamicHostAllocation is used.
@@ -498,12 +502,12 @@ type AWSMachine struct {
 }
 
 // GetConditions returns the observations of the operational state of the AWSMachine resource.
-func (r *AWSMachine) GetConditions() clusterv1.Conditions {
+func (r *AWSMachine) GetConditions() clusterv1beta1.Conditions {
 	return r.Status.Conditions
 }
 
-// SetConditions sets the underlying service state of the AWSMachine to the predescribed clusterv1.Conditions.
-func (r *AWSMachine) SetConditions(conditions clusterv1.Conditions) {
+// SetConditions sets the underlying service state of the AWSMachine to the predescribed clusterv1beta1.Conditions.
+func (r *AWSMachine) SetConditions(conditions clusterv1beta1.Conditions) {
 	r.Status.Conditions = conditions
 }
 
