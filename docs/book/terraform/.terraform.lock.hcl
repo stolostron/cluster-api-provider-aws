@@ -31,6 +31,7 @@ provider "registry.terraform.io/hashicorp/archive" {
 }
 
 provider "registry.terraform.io/hashicorp/aws" {
+
   version = "6.25.0"
   hashes = [
     "h1:+hGrZFOwhO5Wa60cy9tntT0qkBf81rHJIF2ErJ5JkQg=",
