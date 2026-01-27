@@ -576,7 +576,7 @@ func (s *Service) runInstance(role string, i *infrav1.Instance) (*infrav1.Instan
 		for index, id := range i.NetworkInterfaces {
 			netInterfaces = append(netInterfaces, types.InstanceNetworkInterfaceSpecification{
 				NetworkInterfaceId: aws.String(id),
-				DeviceIndex:        aws.Int32(int32(index)), //nolint:gosec // disable G115
+				DeviceIndex:        aws.Int32(int32(index)),
 			})
 		}
 		netInterfaces[0].AssociatePublicIpAddress = i.PublicIPOnLaunch
@@ -1146,7 +1146,7 @@ func (s *Service) GetDHCPOptionSetDomainName(ec2client common.EC2API, vpcID *str
 
 	dhcpResult, err := ec2client.DescribeDhcpOptions(context.TODO(), dhcpInput)
 	if err != nil {
-		log.Error(err, "failed to describe DHCP Options Set", "DhcpOptionsSet", *dhcpResult)
+		log.Error(err, "failed to describe DHCP Options Set", "input", *dhcpInput)
 		return nil
 	}
 
