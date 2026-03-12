@@ -27,7 +27,7 @@ import (
 	oidcconfig "github.com/openshift/rosa/cmd/create/oidcconfig"
 	oidcprovider "github.com/openshift/rosa/cmd/create/oidcprovider"
 	operatorroles "github.com/openshift/rosa/cmd/create/operatorroles"
-	"github.com/openshift/rosa/pkg/aws"
+	rosaAWSClient "github.com/openshift/rosa/pkg/aws"
 	interactive "github.com/openshift/rosa/pkg/interactive"
 	rosalogging "github.com/openshift/rosa/pkg/logging"
 	"github.com/openshift/rosa/pkg/ocm"
@@ -448,7 +448,7 @@ func (r ROSARoleConfigReconciler) operatorRolesReady(operatorRolesRef v1beta2.AW
 
 // setUpRuntime sets up the ROSA runtime if it doesn't exist.
 func (r *ROSARoleConfigReconciler) setUpRuntime(ctx context.Context, scope *scope.RosaRoleConfigScope) error {
-	if r.Runtime != nil {
+	if r.Runtime != nil && r.Runtime.AWSClient != nil {
 		return nil
 	}
 
@@ -468,7 +468,10 @@ func (r *ROSARoleConfigReconciler) setUpRuntime(ctx context.Context, scope *scop
 	r.Runtime.Reporter = reporter.CreateReporter() // &rosa.Reporter{}
 	r.Runtime.Logger = rosalogging.NewLogger()
 
-	r.Runtime.AWSClient, err = aws.NewClient().Logger(r.Runtime.Logger).Build()
+	session := scope.Session()
+	r.Runtime.AWSClient, err = rosaAWSClient.NewClient().
+		ExternalConfig(&session).
+		Logger(r.Runtime.Logger).Build()
 	if err != nil {
 		return fmt.Errorf("failed to create aws client: %w", err)
 	}

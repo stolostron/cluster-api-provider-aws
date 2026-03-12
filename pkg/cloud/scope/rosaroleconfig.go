@@ -18,6 +18,7 @@ package scope
 
 import (
 	"context"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
@@ -70,7 +71,14 @@ func NewRosaRoleConfigScope(params RosaRoleConfigScopeParams) (*RosaRoleConfigSc
 		RosaRoleConfig: params.RosaRoleConfig,
 	}
 
-	session, serviceLimiters, err := sessionForClusterWithRegion(params.Client, RosaRoleConfigScope, "", params.Logger)
+	// Determine region from environment variables
+	region := os.Getenv("AWS_REGION")
+	if region == "" {
+		region = os.Getenv("AWS_DEFAULT_REGION")
+	}
+
+	// Create AWS session using IdentityRef and region
+	session, serviceLimiters, err := sessionForClusterWithRegion(params.Client, RosaRoleConfigScope, region, params.Logger)
 	if err != nil {
 		return nil, errors.Errorf("failed to create aws V2 session: %v", err)
 	}
