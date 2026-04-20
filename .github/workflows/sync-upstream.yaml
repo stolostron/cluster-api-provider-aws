@@ -133,9 +133,14 @@ jobs:
             echo "merge_status=success" >> $GITHUB_OUTPUT
           else
             echo "merge_status=conflict" >> $GITHUB_OUTPUT
-            # Abort the merge
-            git merge --abort
+            # Commit the conflicted state for manual resolution
+            git add -A
+            git commit -m "Merge upstream ${UPSTREAM_TAG} into ${{ matrix.downstream_branch }} (with conflicts)"
           fi
+
+          # Keep downstream OWNERS files
+          git checkout ${{ matrix.downstream_branch }} -- OWNERS OWNERS_ALIASES 2>/dev/null || true
+          git diff --quiet HEAD -- OWNERS OWNERS_ALIASES || (git add OWNERS OWNERS_ALIASES && git commit --amend --no-edit)
 
       - name: Push sync branch
         if: steps.should_sync.outputs.sync == 'true' && steps.find_tag.outputs.tag_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
