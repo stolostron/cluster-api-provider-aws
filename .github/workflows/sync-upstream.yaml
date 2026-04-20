@@ -201,6 +201,7 @@ jobs:
           fi
 
           gh pr create \
+            --repo "${{ github.repository }}" \
             --title "${PR_TITLE}" \
             --body "${PR_BODY}" \
             --base "${{ matrix.downstream_branch }}" \
