@@ -762,14 +762,6 @@ func (r *ROSAControlPlaneReconciler) updateOCMClusterSpec(rosaControlPlane *rosa
 		updated = true
 	}
 
-<<<<<<< HEAD
-	if rosaControlPlane.Spec.ChannelGroup != "" {
-		channelGroup := string(rosaControlPlane.Spec.ChannelGroup)
-		if cluster.Version() == nil || cluster.Version().ChannelGroup() != channelGroup {
-			ocmClusterSpec.ChannelGroup = channelGroup
-			updated = true
-		}
-=======
 	// Handle channel and channelGroup updates.
 	// If neither is set, OCM will set the channel and channelGroup based on cluster version.
 	if rosaControlPlane.Spec.Channel != "" {
@@ -782,7 +774,6 @@ func (r *ROSAControlPlaneReconciler) updateOCMClusterSpec(rosaControlPlane *rosa
 		// Set channelGroup (legacy field)
 		ocmClusterSpec.ChannelGroup = string(rosaControlPlane.Spec.ChannelGroup)
 		updated = true
->>>>>>> v2.11.0
 	}
 
 	if rosaControlPlane.Spec.AutoNode != nil {
@@ -1311,8 +1302,6 @@ func buildOCMClusterSpec(controlPlaneSpec rosacontrolplanev1.RosaControlPlaneSpe
 			S3ConfigBucketPrefix: controlPlaneSpec.S3LogForwarder.S3ConfigBucketPrefix,
 		}
 	}
-<<<<<<< HEAD
-=======
 
 	// Handle channel and channelGroup.
 	// If neither is set, OCM will set the channel and channelGroup based on cluster version.
@@ -1324,7 +1313,6 @@ func buildOCMClusterSpec(controlPlaneSpec rosacontrolplanev1.RosaControlPlaneSpe
 		ocmClusterSpec.ChannelGroup = string(controlPlaneSpec.ChannelGroup)
 	}
 
->>>>>>> v2.11.0
 	return ocmClusterSpec, nil
 }
 

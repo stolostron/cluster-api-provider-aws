@@ -630,8 +630,6 @@ func TestROSARoleConfigReconcileExist(t *testing.T) {
 		g.Expect(readyCondition.Status).To(Equal(corev1.ConditionTrue))
 		g.Expect(readyCondition.Reason).To(Equal(expinfrav1.RosaRoleConfigCreatedReason))
 	}).WithTimeout(30 * time.Second).WithPolling(500 * time.Millisecond).Should(Succeed())
-<<<<<<< HEAD
-=======
 }
 
 func TestROSARoleConfigSetUpRuntimeWithExpiredAWSCredentials(t *testing.T) {
@@ -822,7 +820,6 @@ func TestROSARoleConfigSetUpRuntimeIdempotency(t *testing.T) {
 	err = reconciler.setUpRuntime(ctx, scope)
 	g.Expect(err).ToNot(HaveOccurred())
 	g.Expect(callCount).To(Equal(0), "Still should not call NewOCMClient")
->>>>>>> v2.11.0
 }
 
 func TestROSARoleConfigReconcileDelete(t *testing.T) {

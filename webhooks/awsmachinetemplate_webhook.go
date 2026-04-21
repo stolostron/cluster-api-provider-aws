@@ -186,10 +186,6 @@ func (w *AWSMachineTemplate) validateHostAllocation(r *infrav1.AWSMachineTemplat
 		allErrs = append(allErrs, field.Forbidden(field.NewPath("spec.template.spec.hostID"), "hostID and dynamicHostAllocation are mutually exclusive"), field.Forbidden(field.NewPath("spec.template.spec.dynamicHostAllocation"), "hostID and dynamicHostAllocation are mutually exclusive"))
 	}
 
-<<<<<<< HEAD:api/v1beta2/awsmachinetemplate_webhook.go
-	// When hostAffinity is "host", either hostID or dynamicHostAllocation must be specified
-	if spec.HostAffinity != nil && *spec.HostAffinity == "host" && !hasHostID && !hasDynamicHostAllocation {
-=======
 	// HostID, HostAffinity, and DynamicHostAllocation can only be set when Tenancy is "host"
 	if hasHostID && spec.Tenancy != hostTenancy {
 		allErrs = append(allErrs, field.Forbidden(field.NewPath("spec.template.spec.hostID"), "hostID can only be set when tenancy is 'host'"))
@@ -205,7 +201,6 @@ func (w *AWSMachineTemplate) validateHostAllocation(r *infrav1.AWSMachineTemplat
 
 	// When hostAffinity is "host", either hostID or dynamicHostAllocation must be specified
 	if spec.HostAffinity != nil && *spec.HostAffinity == hostAffinity && !hasHostID && !hasDynamicHostAllocation {
->>>>>>> v2.11.0:webhooks/awsmachinetemplate_webhook.go
 		allErrs = append(allErrs, field.Required(field.NewPath("spec.template.spec.hostID"), "hostID or dynamicHostAllocation must be set when hostAffinity is 'host'"))
 	}
 
