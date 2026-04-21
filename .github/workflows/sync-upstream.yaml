@@ -139,9 +139,9 @@ jobs:
             git commit -m "Merge upstream ${UPSTREAM_TAG} into ${{ matrix.downstream_branch }} (with conflicts)"
           fi
 
-          # Keep downstream OWNERS files
-          git checkout ${{ matrix.downstream_branch }} -- OWNERS OWNERS_ALIASES 2>/dev/null || true
-          git diff --quiet HEAD -- OWNERS OWNERS_ALIASES || (git add OWNERS OWNERS_ALIASES && git commit --amend --no-edit)
+          # Keep downstream OWNERS and workflow files
+          git checkout ${{ matrix.downstream_branch }} -- OWNERS OWNERS_ALIASES .github/workflows/ 2>/dev/null || true
+          git diff --quiet HEAD -- OWNERS OWNERS_ALIASES .github/workflows/ || (git add OWNERS OWNERS_ALIASES .github/workflows/ && git commit --amend --no-edit)
 
       - name: Push sync branch
         if: steps.should_sync.outputs.sync == 'true' && steps.find_tag.outputs.tag_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
