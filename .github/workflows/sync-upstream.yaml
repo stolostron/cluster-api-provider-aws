@@ -32,16 +32,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Downstream branch -> Upstream version mapping
-          # main syncs with latest upstream major release version
+          # Downstream branch -> Upstream branch mapping
+          # main syncs with latest upstream release branch
           - downstream_branch: main
-            upstream_version: latest
+            upstream_branch: release-2.11
           - downstream_branch: backplane-2.10
-            upstream_version: v2.9
+            upstream_branch: release-2.9
           - downstream_branch: backplane-2.11
-            upstream_version: v2.10
+            upstream_branch: release-2.10
           - downstream_branch: backplane-2.17
-            upstream_version: v2.11
+            upstream_branch: release-2.11
 
     steps:
       - name: Check if branch should be synced
@@ -69,7 +69,7 @@ jobs:
         if: steps.should_sync.outputs.sync == 'true'
         run: |
           git remote add upstream https://github.com/kubernetes-sigs/cluster-api-provider-aws.git || true
-          git fetch upstream --tags
+          git fetch upstream ${{ matrix.upstream_branch }}
 
       - name: Configure git
         if: steps.should_sync.outputs.sync == 'true'
@@ -77,60 +77,52 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      - name: Find latest upstream release tag
+      - name: Get upstream branch ref
         if: steps.should_sync.outputs.sync == 'true'
-        id: find_tag
+        id: get_ref
         run: |
-          # Set pattern based on upstream version
-          if [ "${{ matrix.upstream_version }}" = "latest" ]; then
-            PATTERN="v*.*.*"
-          else
-            PATTERN="${{ matrix.upstream_version }}.*"
-          fi
+          UPSTREAM_REF="upstream/${{ matrix.upstream_branch }}"
 
-          # Find the latest tag matching the pattern
-          LATEST_TAG=$(git tag -l "${PATTERN}" --sort=-v:refname | head -n 1)
-
-          if [ -z "$LATEST_TAG" ]; then
-            echo "No release tag found for pattern: ${PATTERN}"
-            echo "tag_found=false" >> $GITHUB_OUTPUT
+          if git rev-parse --verify "${UPSTREAM_REF}" >/dev/null 2>&1; then
+            echo "Found upstream branch: ${UPSTREAM_REF}"
+            echo "upstream_ref=${UPSTREAM_REF}" >> $GITHUB_OUTPUT
+            echo "ref_found=true" >> $GITHUB_OUTPUT
           else
-            echo "Found latest tag: $LATEST_TAG"
-            echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
-            echo "tag_found=true" >> $GITHUB_OUTPUT
+            echo "Upstream branch not found: ${UPSTREAM_REF}"
+            echo "ref_found=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Check for updates
-        if: steps.should_sync.outputs.sync == 'true' && steps.find_tag.outputs.tag_found == 'true'
+        if: steps.should_sync.outputs.sync == 'true' && steps.get_ref.outputs.ref_found == 'true'
         id: check_updates
         run: |
-          UPSTREAM_TAG="${{ steps.find_tag.outputs.latest_tag }}"
+          UPSTREAM_REF="${{ steps.get_ref.outputs.upstream_ref }}"
 
-          # Check if we already have this tag merged
-          if git merge-base --is-ancestor "${UPSTREAM_TAG}" HEAD; then
-            echo "Already up to date with ${UPSTREAM_TAG}"
+          # Check if we already have this branch merged
+          if git merge-base --is-ancestor "${UPSTREAM_REF}" HEAD; then
+            echo "Already up to date with ${UPSTREAM_REF}"
             echo "needs_update=false" >> $GITHUB_OUTPUT
           else
-            echo "Updates available from ${UPSTREAM_TAG}"
+            echo "Updates available from ${UPSTREAM_REF}"
             echo "needs_update=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Create sync branch
-        if: steps.should_sync.outputs.sync == 'true' && steps.find_tag.outputs.tag_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
+        if: steps.should_sync.outputs.sync == 'true' && steps.get_ref.outputs.ref_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
         id: create_branch
         run: |
-          SYNC_BRANCH="sync-upstream-${{ matrix.upstream_version }}-$(date +%Y%m%d-%H%M%S)"
+          SYNC_BRANCH="sync-upstream-${{ matrix.upstream_branch }}-$(date +%Y%m%d-%H%M%S)"
           git checkout -b "${SYNC_BRANCH}"
           echo "sync_branch=${SYNC_BRANCH}" >> $GITHUB_OUTPUT
 
       - name: Merge upstream changes
-        if: steps.should_sync.outputs.sync == 'true' && steps.find_tag.outputs.tag_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
+        if: steps.should_sync.outputs.sync == 'true' && steps.get_ref.outputs.ref_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
         id: merge
         run: |
-          UPSTREAM_TAG="${{ steps.find_tag.outputs.latest_tag }}"
+          UPSTREAM_REF="${{ steps.get_ref.outputs.upstream_ref }}"
 
           # Attempt to merge
-          if git merge "${UPSTREAM_TAG}" --no-edit -m "Merge upstream ${UPSTREAM_TAG} into ${{ matrix.downstream_branch }}"; then
+          if git merge "${UPSTREAM_REF}" --no-edit -m "Merge upstream ${{ matrix.upstream_branch }} into ${{ matrix.downstream_branch }}"; then
             echo "merge_status=success" >> $GITHUB_OUTPUT
           else
             echo "merge_status=conflict" >> $GITHUB_OUTPUT
@@ -141,7 +133,7 @@ jobs:
             echo "EOF" >> $GITHUB_OUTPUT
             # Commit the conflicted state for manual resolution
             git add -A
-            git commit -m "Merge upstream ${UPSTREAM_TAG} into ${{ matrix.downstream_branch }} (with conflicts)"
+            git commit -m "Merge upstream ${{ matrix.upstream_branch }} into ${{ matrix.downstream_branch }} (with conflicts)"
           fi
 
           # Keep downstream OWNERS and workflow files
@@ -149,28 +141,27 @@ jobs:
           git diff --quiet HEAD -- OWNERS OWNERS_ALIASES .github/workflows/ || (git add OWNERS OWNERS_ALIASES .github/workflows/ && git commit --amend --no-edit)
 
       - name: Push sync branch
-        if: steps.should_sync.outputs.sync == 'true' && steps.find_tag.outputs.tag_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
+        if: steps.should_sync.outputs.sync == 'true' && steps.get_ref.outputs.ref_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
         run: |
           git push origin "${{ steps.create_branch.outputs.sync_branch }}"
 
       - name: Create Pull Request
-        if: steps.should_sync.outputs.sync == 'true' && steps.find_tag.outputs.tag_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
+        if: steps.should_sync.outputs.sync == 'true' && steps.get_ref.outputs.ref_found == 'true' && steps.check_updates.outputs.needs_update == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          UPSTREAM_TAG="${{ steps.find_tag.outputs.latest_tag }}"
+          UPSTREAM_BRANCH="${{ matrix.upstream_branch }}"
 
           if [ "${{ steps.merge.outputs.merge_status }}" = "success" ]; then
-            PR_TITLE="🌱 [Automated] Sync ${{ matrix.downstream_branch }} with upstream ${UPSTREAM_TAG}"
+            PR_TITLE="🌱 [Automated] Sync ${{ matrix.downstream_branch }} with upstream ${UPSTREAM_BRANCH}"
             PR_BODY="$(cat <<EOF
           ## Automated Upstream Sync
 
-          This PR syncs the \`${{ matrix.downstream_branch }}\` branch with upstream release \`${UPSTREAM_TAG}\`.
+          This PR syncs the \`${{ matrix.downstream_branch }}\` branch with upstream branch \`${UPSTREAM_BRANCH}\`.
 
           ### Mapping
           - Downstream: \`${{ matrix.downstream_branch }}\`
-          - Upstream: \`${{ matrix.upstream_version }}.x\`
-          - Latest tag: \`${UPSTREAM_TAG}\`
+          - Upstream: \`${UPSTREAM_BRANCH}\`
 
           ### Status
           ✅ Merged cleanly without conflicts
@@ -184,16 +175,15 @@ jobs:
           EOF
           )"
           else
-            PR_TITLE="🌱 [Automated] Sync ${{ matrix.downstream_branch }} with upstream ${UPSTREAM_TAG} (WITH CONFLICTS)"
+            PR_TITLE="🌱 [Automated] Sync ${{ matrix.downstream_branch }} with upstream ${UPSTREAM_BRANCH} (WITH CONFLICTS)"
             PR_BODY="$(cat <<EOF
           ## Automated Upstream Sync
 
-          This PR attempts to sync the \`${{ matrix.downstream_branch }}\` branch with upstream release \`${UPSTREAM_TAG}\`.
+          This PR attempts to sync the \`${{ matrix.downstream_branch }}\` branch with upstream branch \`${UPSTREAM_BRANCH}\`.
 
           ### Mapping
           - Downstream: \`${{ matrix.downstream_branch }}\`
-          - Upstream: \`${{ matrix.upstream_version }}.x\`
-          - Latest tag: \`${UPSTREAM_TAG}\`
+          - Upstream: \`${UPSTREAM_BRANCH}\`
 
           ### Status
           ⚠️ **MERGE CONFLICTS DETECTED**
@@ -228,12 +218,12 @@ jobs:
         run: |
           echo "### Sync Summary for ${{ matrix.downstream_branch }}" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ steps.find_tag.outputs.tag_found }}" = "false" ]; then
-            echo "⚠️ No upstream release found for ${{ matrix.upstream_version }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.get_ref.outputs.ref_found }}" = "false" ]; then
+            echo "⚠️ Upstream branch not found: ${{ matrix.upstream_branch }}" >> $GITHUB_STEP_SUMMARY
           elif [ "${{ steps.check_updates.outputs.needs_update }}" = "false" ]; then
-            echo "✅ Already up to date with ${{ steps.find_tag.outputs.latest_tag }}" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Already up to date with ${{ matrix.upstream_branch }}" >> $GITHUB_STEP_SUMMARY
           elif [ "${{ steps.merge.outputs.merge_status }}" = "success" ]; then
-            echo "✅ Successfully merged ${{ steps.find_tag.outputs.latest_tag }}" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Successfully merged ${{ matrix.upstream_branch }}" >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ Merge conflicts with ${{ steps.find_tag.outputs.latest_tag }}" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Merge conflicts with ${{ matrix.upstream_branch }}" >> $GITHUB_STEP_SUMMARY
           fi
