@@ -1,6 +1,6 @@
 module sigs.k8s.io/cluster-api-provider-aws/v2
 
-go 1.24.0
+go 1.25.0
 
 // Required to include https://github.com/kubernetes-sigs/cluster-api/pull/13022
 replace sigs.k8s.io/cluster-api/test => sigs.k8s.io/cluster-api/test v1.11.4-0.20251125201037-d322ff6baa2f
