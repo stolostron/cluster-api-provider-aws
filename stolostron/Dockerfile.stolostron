@@ -1,5 +1,5 @@
 
-FROM registry.access.redhat.com/ubi8/go-toolset:1.24.6-1764274816 AS toolchain
+FROM registry.access.redhat.com/ubi9/go-toolset:1.25.9-1778675823 AS toolchain
 
 
 # Run this with docker build --build_arg $(go env GOPROXY) to override the goproxy
@@ -24,7 +24,7 @@ ARG package=.
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.local/share/golang \
-    CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -ldflags "-extldflags '-static'"  -o manager ${package}
+    CGO_ENABLED=1 GOEXPERIMENT=strictfipsruntime go build -o manager ${package}
 
 # Copy the controller-manager into a thin image
 
@@ -39,7 +39,7 @@ LABEL com.redhat.component="cluster-api-provider-aws" \
       io.openshift.tags="Cluster-api-provider-aws,capa,multicluster-engine" \
       name="Cluster-api-provider-aws" \
       summary="Cluster api provider for aws" \
-      cpe="cpe:/a:redhat:multicluster_engine:2.11::el9"
+      cpe="cpe:/a:redhat:multicluster_engine:2.17::el9"
 
 COPY --from=builder /opt/app-root/src/manager /bin/cluster-api-provider-aws-controller-manager
 ENTRYPOINT ["/bin/cluster-api-provider-aws-controller-manager"]
