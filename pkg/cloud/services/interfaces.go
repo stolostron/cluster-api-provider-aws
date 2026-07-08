@@ -160,7 +160,7 @@ type ELBInterface interface {
 // NetworkInterface encapsulates the methods exposed to the cluster
 // controller.
 type NetworkInterface interface {
-	DeleteNetwork() error
+	DeleteNetwork(ctx context.Context) error
 	ReconcileNetwork() error
 }
 
