@@ -35,7 +35,7 @@ jobs:
           # Downstream branch -> Upstream branch mapping
           # main syncs with latest upstream release branch
           - downstream_branch: main
-            upstream_branch: release-2.11
+            upstream_branch: release-2.12
           - downstream_branch: backplane-2.10
             upstream_branch: release-2.9
           - downstream_branch: backplane-2.11
