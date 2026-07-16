@@ -22,7 +22,7 @@ ARG package=.
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.local/share/golang \
-    CGO_ENABLED=0 GOOS=linux GOARCH=${ARCH} go build -ldflags "-extldflags '-static'"  -o manager ${package}
+    CGO_ENABLED=1 GO111MODULE=on GOEXPERIMENT=strictfipsruntime go build -o manager ${package}
 
 # Copy the controller-manager into a thin image
 FROM registry.access.redhat.com/ubi9/ubi:9.6-1754380668
