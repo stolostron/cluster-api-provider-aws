@@ -138,6 +138,12 @@ jobs:
 
           # Keep downstream OWNERS and workflow files
           git checkout ${{ matrix.downstream_branch }} -- OWNERS OWNERS_ALIASES .github/workflows/ 2>/dev/null || true
+          # Remove upstream-only workflows that require upstream AWS credentials
+          git rm -f .github/workflows/auto-publish-ami.yml \
+                    .github/workflows/build-ami-v2.yml \
+                    .github/workflows/ami-housekeeping-delete.yml \
+                    .github/workflows/ami-housekeeping-list.yml \
+                    .github/workflows/detect-k8s-releases.yml 2>/dev/null || true
           git diff --quiet HEAD -- OWNERS OWNERS_ALIASES .github/workflows/ || (git add OWNERS OWNERS_ALIASES .github/workflows/ && git commit --amend --no-edit)
 
       - name: Push sync branch
