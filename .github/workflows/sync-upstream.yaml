@@ -38,7 +38,7 @@ jobs:
           - downstream_branch: main
             upstream_branch: release-2.13
           - downstream_branch: backplane-5.0
-            upstream_branch: release-2.12
+            upstream_branch: release-2.13
           - downstream_branch: backplane-2.10
             upstream_branch: release-2.9
           - downstream_branch: backplane-2.11
