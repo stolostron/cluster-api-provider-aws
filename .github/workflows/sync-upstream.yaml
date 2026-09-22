@@ -16,6 +16,7 @@ on:
           - ''
           - main
           - backplane-5.0
+          - backplane-5.1
           - backplane-2.10
           - backplane-2.11
           - backplane-2.17
@@ -38,6 +39,8 @@ jobs:
           - downstream_branch: main
             upstream_branch: release-2.13
           - downstream_branch: backplane-5.0
+            upstream_branch: release-2.13
+          - downstream_branch: backplane-5.1
             upstream_branch: release-2.13
           - downstream_branch: backplane-2.10
             upstream_branch: release-2.9
