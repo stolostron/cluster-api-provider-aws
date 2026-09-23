@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=1 GO111MODULE=on GOEXPERIMENT=strictfipsruntime go build -o manager ${package}
 
 # Copy the controller-manager into a thin image
-FROM registry.access.redhat.com/ubi9/ubi:9.6-1754380668
+FROM registry.access.redhat.com/ubi9/ubi:latest
 
 LABEL com.redhat.component="cluster-api-provider-aws" \
       url="https://github.com/stolostron/cluster-api-provider-aws" \
