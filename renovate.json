@@ -18,7 +18,10 @@
         },
         {
             "matchManagers": [
-                "Dockerfile.stolostron"
+                "dockerfile"
+            ],
+            "matchFileNames": [
+                "stolostron/Dockerfile.stolostron"
             ],
             "enabled": true
         },
