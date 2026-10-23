@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/go-toolset:1.24.6-1755529056 AS toolchain
+FROM registry.redhat.io/openshift/golang-builder:golang-builder-v1.24-rhel8 AS toolchain
 
 # Run this with docker build --build_arg $(go env GOPROXY) to override the goproxy
 ARG goproxy=https://proxy.golang.org
@@ -8,6 +8,8 @@ FROM toolchain AS builder
 
 ENV GOPATH=/opt/app-root/src/go
 ENV GOFLAGS="-buildvcs=false"
+
+WORKDIR /opt/app-root/src
 
 COPY . .
 
