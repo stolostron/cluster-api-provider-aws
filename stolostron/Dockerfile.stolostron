@@ -11,6 +11,8 @@ FROM toolchain AS builder
 ENV GOPATH=/opt/app-root/src/go
 ENV GOFLAGS="-buildvcs=false"
 
+WORKDIR /opt/app-root/src
+
 COPY . .
 
 # Cache deps before building and copying source so that we don't need to re-download as much
