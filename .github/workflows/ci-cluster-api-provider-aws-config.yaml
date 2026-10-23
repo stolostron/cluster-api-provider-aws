@@ -23,4 +23,4 @@ jobs:
 
           printf '%s' "$AUTH_JSON" > "$AUTH_FILE"
           unset AUTH_JSON
-          podman build --authfile "$AUTH_FILE" -f stolostron/Dockerfile.stolostron .
+        run: podman build --authfile "$AUTH_FILE" -f stolostron/Dockerfile.stolostron .
