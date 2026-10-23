@@ -12,15 +12,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: docker-build
-        env:
-          AUTH_JSON: ${{ secrets.AUTH_JSON }}
-        run: |
-          set -euo pipefail
-
-          AUTH_FILE="$(mktemp)"
-          chmod 600 "$AUTH_FILE"
-          trap 'rm -f "$AUTH_FILE"' EXIT
-
-          printf '%s' "$AUTH_JSON" > "$AUTH_FILE"
-          unset AUTH_JSON
-        run: podman build --authfile "$AUTH_FILE" -f stolostron/Dockerfile.stolostron .
+        run: podman build -f stolostron/Dockerfile.stolostron .
