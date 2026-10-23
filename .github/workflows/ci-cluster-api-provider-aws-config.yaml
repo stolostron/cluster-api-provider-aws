@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: .
+        working-directory: ./stolostron
     steps:
       - uses: actions/checkout@v4
       - name: docker-build
@@ -17,10 +17,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          AUTH_FILE="$(mktemp)"
-          chmod 600 "$AUTH_FILE"
-          trap 'rm -f "$AUTH_FILE"' EXIT
+          DOCKER_CONFIG="$(mktemp -d)"
+          chmod 700 "$DOCKER_CONFIG"
+          trap 'rm -rf "$DOCKER_CONFIG"' EXIT
 
-          printf '%s' "$AUTH_JSON" > "$AUTH_FILE"
+          printf '%s' "$AUTH_JSON" > "$DOCKER_CONFIG/config.json"
+          chmod 600 "$DOCKER_CONFIG/config.json"
           unset AUTH_JSON
-          podman build --authfile "$AUTH_FILE" -f stolostron/Dockerfile.stolostron .
+
+          export DOCKER_CONFIG
+          make docker-build
